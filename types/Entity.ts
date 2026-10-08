@@ -15,3 +15,4 @@ export type CreateBookPayload = Omit<Book, 'id'>;
 
 // Tipo para actualizar un libro (campos parciales)
 export type UpdateBookPayload = Partial<Omit<Book, 'id'>>;
+

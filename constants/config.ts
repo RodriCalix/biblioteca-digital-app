@@ -1,7 +1,7 @@
 // Configuración global de la aplicación
 export const APP_CONFIG = {
   // URL base de MockAPI - Reemplaza con tu URL real de MockAPI.io
-  API_BASE_URL: 'https://6818fc2b5a4b07b9d1ce55d2.mockapi.io/api/v1',
+  API_BASE_URL: 'https://6ac70c67bea0e72cf5c96a7a.mockapi.io/api/v1',
 
   // Timeout para las peticiones HTTP (en milisegundos)
   API_TIMEOUT: 10000,
@@ -50,3 +50,4 @@ export const APP_CONFIG = {
     'Poesía',
   ],
 };
+

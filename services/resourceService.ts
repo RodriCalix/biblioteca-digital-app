@@ -47,3 +47,4 @@ export const deleteBook = async (id: string): Promise<Book> => {
   const response = await api.delete<Book>(`${RESOURCE}/${id}`);
   return response.data;
 };
+

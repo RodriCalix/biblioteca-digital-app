@@ -4,7 +4,7 @@
  */
 const axios = require('axios');
 
-const BASE_URL = 'https://6818fc2b5a4b07b9d1ce55d2.mockapi.io/api/v1';
+const BASE_URL = 'https://6ac70c67bea0e72cf5c96a7a.mockapi.io/api/v1';
 
 const books = [
   {
@@ -115,3 +115,4 @@ async function seedBooks() {
 }
 
 seedBooks();
+
