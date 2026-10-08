@@ -6,6 +6,8 @@ Este proyecto es una aplicación móvil desarrollada como práctico para la mate
 * Rodrigo Calixto - CL230353
 * Luis Cuadra - CC230464
 
+🔗 **Repositorio:** [github.com/RodriCalix/biblioteca-digital-app](https://github.com/RodriCalix/biblioteca-digital-app)
+
 ## 🛠️ Tecnologías Utilizadas
 
 * **Frontend Móvil:** [React Native](https://reactnative.dev/)
@@ -57,10 +59,10 @@ Si descargaste o clonaste este repositorio en una computadora nueva, sigue estos
 ### Instrucciones de Instalación
 
 **1. Clonar el repositorio**
-Abre una terminal y clona este proyecto (sustituye la URL por la de tu repositorio si lo subiste a GitHub):
+Abre una terminal y clona este proyecto:
 ```bash
-git clone <URL_DE_TU_REPOSITORIO>
-cd biblioteca-app
+git clone https://github.com/RodriCalix/biblioteca-digital-app.git
+cd biblioteca-digital-app
 ```
 
 **2. Instalar las dependencias**
