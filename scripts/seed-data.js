@@ -1,11 +1,19 @@
 /**
- * Script para poblar MockAPI con 10 libros de ejemplo.
- * Ejecutar con: node scripts/seed-data.js
+ * ============================================================================
+ * ARCHIVO: scripts/seed-data.js
+ * DESCRIPCIÓN: Script utilitario de Node.js para inicializar y poblar la base de datos
+ * en MockAPI.io con una colección inicial de 10 libros de ejemplo.
+ * 
+ * USO:
+ *   node scripts/seed-data.js
+ * ============================================================================
  */
 const axios = require('axios');
 
+// URL base del recurso en MockAPI
 const BASE_URL = 'https://6ac70c67bea0e72cf5c96a7a.mockapi.io/api/v1';
 
+// Catálogo inicial con 10 libros de diversos géneros y estados
 const books = [
   {
     title: 'Cien años de soledad',
@@ -99,6 +107,10 @@ const books = [
   },
 ];
 
+/**
+ * Función asíncrona principal que itera sobre los libros y los inserta uno a uno
+ * mediante peticiones HTTP POST a MockAPI.
+ */
 async function seedBooks() {
   console.log('🌱 Iniciando seed de datos en MockAPI...\n');
 
@@ -114,5 +126,6 @@ async function seedBooks() {
   console.log('\n🎉 Seed completado!');
 }
 
+// Ejecución del script
 seedBooks();
 

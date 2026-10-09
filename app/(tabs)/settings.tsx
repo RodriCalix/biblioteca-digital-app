@@ -1,33 +1,46 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Linking,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+/**
+ * ============================================================================
+ * ARCHIVO: app/(tabs)/settings.tsx
+ * DESCRIPCIÓN: Pantalla de Configuración e Información del Sistema.
+ * Presenta detalles informativos sobre la aplicación:
+ * 1. Identidad de la app y versión actual.
+ * 2. Parámetros de conexión con la API REST (Base URL, Timeout).
+ * 3. Contexto académico del proyecto (Práctico DPS).
+ * 4. Listado de tecnologías utilizadas (React Native, Expo Router, TypeScript, Axios, MockAPI).
+ * 5. Acceso directo al portal web de MockAPI.io y créditos de los desarrolladores.
+ * ============================================================================
+ */
 import { APP_CONFIG } from '@/constants/config';
+import {
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 /**
- * Pantalla de configuración e información de la app.
+ * Componente SettingsScreen.
+ * Vista estática e informativa estructurada en secciones con tarjetas visuales.
  */
 export default function SettingsScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header */}
+      {/* Sección 1: Encabezado de identidad de la aplicación */}
       <View style={styles.headerSection}>
         <Text style={styles.appIcon}>📚</Text>
         <Text style={styles.appName}>{APP_CONFIG.APP_NAME}</Text>
         <Text style={styles.appVersion}>Versión 1.0.0</Text>
       </View>
 
-      {/* Información de la API */}
+      {/* Sección 2: Parámetros técnicos de conexión a la API */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🔗 Conexión API</Text>
         <View style={styles.infoCard}>
           <Text style={styles.infoLabel}>Base URL</Text>
+          {/* Texto seleccionable para que el usuario pueda copiar la URL del backend */}
           <Text style={styles.infoValue} selectable>
             {APP_CONFIG.API_BASE_URL}
           </Text>
@@ -38,13 +51,13 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Información del proyecto */}
+      {/* Sección 3: Descripción contextual y académica del proyecto */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>📋 Sobre el Proyecto</Text>
         <View style={styles.infoCard}>
           <Text style={styles.description}>
             Esta aplicación es una biblioteca digital desarrollada como práctico
-            para la materia de Desarrollo de Plataformas y Servicios (DPS).
+            para la materia de Diseño y Programación de Software Multiplataforma (DPS104).
           </Text>
           <Text style={styles.description}>
             Utiliza React Native con Expo Router para la navegación, Axios para
@@ -53,7 +66,7 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Tecnologías */}
+      {/* Sección 4: Grilla de tecnologías del stack de desarrollo */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>⚡ Tecnologías</Text>
         <View style={styles.techGrid}>
@@ -73,7 +86,7 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Enlace a MockAPI */}
+      {/* Sección 5: Enlace externo para abrir el panel de MockAPI en el navegador del dispositivo */}
       <TouchableOpacity
         style={styles.linkButton}
         onPress={() => Linking.openURL('https://mockapi.io')}
@@ -81,50 +94,63 @@ export default function SettingsScreen() {
         <Text style={styles.linkButtonText}>🌍 Abrir MockAPI.io</Text>
       </TouchableOpacity>
 
+      {/* Pie de página con créditos de desarrollo */}
       <Text style={styles.footer}>
-        Desarrollado con ❤️ usando Expo y React Native
+        Desarrollado por Rodrigo Calixto y Luis Cuadra usando Expo y React Native
       </Text>
     </ScrollView>
   );
 }
 
+/**
+ * Estilos visuales de la pantalla de configuración
+ */
 const styles = StyleSheet.create({
+  // Fondo de la pantalla completa
   container: {
     flex: 1,
     backgroundColor: APP_CONFIG.COLORS.background,
   },
+  // Espaciado interno general
   content: {
     padding: 20,
     paddingBottom: 40,
   },
+  // Bloque del ícono y nombre de la aplicación centrado
   headerSection: {
     alignItems: 'center',
     paddingVertical: 24,
     marginBottom: 16,
   },
+  // Tamaño del ícono de la app
   appIcon: {
     fontSize: 56,
     marginBottom: 8,
   },
+  // Nombre de la app destacado en negrita
   appName: {
     fontSize: 24,
     fontWeight: '700',
     color: APP_CONFIG.COLORS.textPrimary,
     marginBottom: 4,
   },
+  // Etiqueta de la versión instalada
   appVersion: {
     fontSize: 14,
     color: APP_CONFIG.COLORS.textSecondary,
   },
+  // Contenedor de cada bloque de configuración
   section: {
     marginBottom: 20,
   },
+  // Título de cada sección
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: APP_CONFIG.COLORS.textPrimary,
     marginBottom: 10,
   },
+  // Tarjeta contenedora de información con borde suave
   infoCard: {
     backgroundColor: APP_CONFIG.COLORS.cardBackground,
     borderRadius: 12,
@@ -132,6 +158,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: APP_CONFIG.COLORS.border,
   },
+  // Etiquetas secundarias en mayúsculas
   infoLabel: {
     fontSize: 12,
     fontWeight: '600',
@@ -140,23 +167,27 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     marginTop: 8,
   },
+  // Valores destacados con tipografía monoespaciada para URLs y métricas
   infoValue: {
     fontSize: 14,
     color: APP_CONFIG.COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
     marginBottom: 4,
   },
+  // Párrafos informativos con interlineado cómodo
   description: {
     fontSize: 14,
     color: APP_CONFIG.COLORS.textSecondary,
     lineHeight: 22,
     marginBottom: 8,
   },
+  // Cuadrícula flexible para chips de tecnologías
   techGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
   },
+  // Elemento individual (badge) de cada tecnología
   techItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -167,15 +198,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: APP_CONFIG.COLORS.border,
   },
+  // Ícono de la tecnología
   techIcon: {
     fontSize: 18,
     marginRight: 6,
   },
+  // Nombre de la tecnología
   techName: {
     fontSize: 13,
     fontWeight: '600',
     color: APP_CONFIG.COLORS.textPrimary,
   },
+  // Botón para abrir URL externa
   linkButton: {
     backgroundColor: APP_CONFIG.COLORS.info,
     paddingVertical: 14,
@@ -183,11 +217,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  // Texto del botón externo
   linkButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
+  // Créditos al pie de la pantalla
   footer: {
     textAlign: 'center',
     fontSize: 13,

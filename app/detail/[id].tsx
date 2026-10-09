@@ -1,3 +1,14 @@
+/**
+ * ============================================================================
+ * ARCHIVO: app/detail/[id].tsx
+ * DESCRIPCIÓN: Pantalla de Detalle de Libro (Operaciones GET, PUT y DELETE).
+ * Permite visualizar la información completa de un libro y realizar acciones:
+ * 1. Cargar el detalle individual mediante su ID (GET /books/:id).
+ * 2. Alternar su estado entre "Disponible" y "Prestado" (PUT /books/:id).
+ * 3. Modificar la calificación con estrellas interactivas (PUT /books/:id).
+ * 4. Eliminar el libro con cuadro de diálogo de confirmación (DELETE /books/:id).
+ * ============================================================================
+ */
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -17,26 +28,36 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { APP_CONFIG } from '@/constants/config';
 
 /**
- * Pantalla de detalle del libro (GET, PUT/PATCH, DELETE)
- * Muestra toda la información del libro con opciones para editar estado,
- * calificación y eliminar.
+ * Componente BookDetailScreen.
+ * Maneja la visualización detallada y operaciones de actualización y eliminación.
  */
 export default function BookDetailScreen() {
+  // Obtiene el parámetro de ruta 'id' desde la URL dinámica
   const { id } = useLocalSearchParams<{ id: string }>();
+  // Hook para navegación hacia atrás o reemplazo de ruta
   const router = useRouter();
 
+  // Estado que almacena la información detallada del libro actual
   const [book, setBook] = useState<Book | null>(null);
+  // Estado para la carga inicial de datos
   const [loading, setLoading] = useState(true);
+  // Estado para deshabilitar botones y mostrar overlay mientras se actualiza o elimina
   const [updating, setUpdating] = useState(false);
+  // Estado para capturar y mostrar errores de conexión
   const [error, setError] = useState<string | null>(null);
 
-  // Cargar los datos del libro
+  /**
+   * Efecto que dispara la consulta del libro cuando el parámetro 'id' está disponible
+   */
   useEffect(() => {
     if (id) {
       fetchBookDetail();
     }
   }, [id]);
 
+  /**
+   * Consulta el registro del libro en la API (GET /books/:id)
+   */
   const fetchBookDetail = async () => {
     try {
       setError(null);
@@ -51,10 +72,14 @@ export default function BookDetailScreen() {
     }
   };
 
-  // Cambiar estado del libro (Disponible <-> Prestado)
+  /**
+   * Alterna el estado del libro entre 'Disponible' y 'Prestado'
+   * Ejecuta una solicitud de actualización en el servidor (PUT)
+   */
   const handleToggleStatus = async () => {
     if (!book) return;
 
+    // Conmutador del nuevo estado
     const newStatus =
       book.status === APP_CONFIG.BOOK_STATUS.AVAILABLE
         ? APP_CONFIG.BOOK_STATUS.BORROWED
@@ -76,7 +101,10 @@ export default function BookDetailScreen() {
     }
   };
 
-  // Cambiar calificación del libro
+  /**
+   * Modifica la calificación por estrellas del libro (1 a 5)
+   * Ejecuta una actualización en la API (PUT)
+   */
   const handleChangeRating = async (newRating: number) => {
     if (!book) return;
 
@@ -96,10 +124,13 @@ export default function BookDetailScreen() {
     }
   };
 
-  // Eliminar el libro con confirmación
+  /**
+   * Solicita confirmación y elimina permanentemente el libro (DELETE)
+   */
   const handleDelete = () => {
     if (!book) return;
 
+    // Diálogo de confirmación nativo para prevenir borrado accidental
     Alert.alert(
       '🗑️ Eliminar libro',
       `¿Estás seguro de eliminar "${book.title}"? Esta acción no se puede deshacer.`,
@@ -114,6 +145,7 @@ export default function BookDetailScreen() {
           onPress: async () => {
             setUpdating(true);
             try {
+              // Llamada a la operación DELETE
               await deleteBook(book.id);
               Alert.alert('✅ Eliminado', 'El libro ha sido eliminado.', [
                 { text: 'OK', onPress: () => router.back() },
@@ -129,10 +161,12 @@ export default function BookDetailScreen() {
     );
   };
 
+  // Renderizado condicional durante la carga inicial
   if (loading) {
     return <LoadingSpinner message="Cargando detalle..." />;
   }
 
+  // Vista en caso de que ocurra un error o el libro no exista
   if (error || !book) {
     return (
       <View style={styles.errorContainer}>
@@ -150,10 +184,12 @@ export default function BookDetailScreen() {
     );
   }
 
+  // Bandera de disponibilidad
   const isAvailable = book.status === APP_CONFIG.BOOK_STATUS.AVAILABLE;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Barra de progreso / overlay superior cuando una acción asíncrona está en curso */}
       {updating && (
         <View style={styles.updatingOverlay}>
           <ActivityIndicator color={APP_CONFIG.COLORS.primary} size="small" />
@@ -161,7 +197,7 @@ export default function BookDetailScreen() {
         </View>
       )}
 
-      {/* Imagen de portada */}
+      {/* Sección 1: Portada grande del libro */}
       <View style={styles.coverSection}>
         <Image
           source={{ uri: book.coverUrl }}
@@ -170,12 +206,12 @@ export default function BookDetailScreen() {
         />
       </View>
 
-      {/* Información principal */}
+      {/* Sección 2: Información principal (título, autor y badge de estado) */}
       <View style={styles.infoSection}>
         <Text style={styles.title}>{book.title}</Text>
         <Text style={styles.author}>por {book.author}</Text>
 
-        {/* Badge de estado */}
+        {/* Badge visual de disponibilidad */}
         <View
           style={[
             styles.statusBadge,
@@ -192,7 +228,7 @@ export default function BookDetailScreen() {
         </View>
       </View>
 
-      {/* Detalles del libro */}
+      {/* Sección 3: Tarjeta con metadatos técnicos (Género, Año, ID) */}
       <View style={styles.detailsCard}>
         <Text style={styles.cardTitle}>📋 Detalles</Text>
 
@@ -216,7 +252,7 @@ export default function BookDetailScreen() {
         </View>
       </View>
 
-      {/* Sección de calificación interactiva */}
+      {/* Sección 4: Selector de calificación interactivo (tocar para actualizar) */}
       <View style={styles.detailsCard}>
         <Text style={styles.cardTitle}>⭐ Calificación</Text>
         <View style={styles.ratingContainer}>
@@ -248,7 +284,7 @@ export default function BookDetailScreen() {
         </Text>
       </View>
 
-      {/* Botón de cambiar estado */}
+      {/* Botón de acción: Alternar estado Disponible <-> Prestado */}
       <TouchableOpacity
         style={[
           styles.statusToggleButton,
@@ -268,7 +304,7 @@ export default function BookDetailScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* Botón de eliminar */}
+      {/* Botón de acción peligrosa: Eliminar libro */}
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={handleDelete}
@@ -280,14 +316,20 @@ export default function BookDetailScreen() {
   );
 }
 
+/**
+ * Estilos visuales de la pantalla de detalles
+ */
 const styles = StyleSheet.create({
+  // Contenedor principal
   container: {
     flex: 1,
     backgroundColor: APP_CONFIG.COLORS.background,
   },
+  // Espaciado inferior para permitir scroll cómodo
   content: {
     paddingBottom: 40,
   },
+  // Barra de estado durante peticiones de actualización
   updatingOverlay: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -296,16 +338,19 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     gap: 8,
   },
+  // Texto dentro de la barra de actualización
   updatingText: {
     color: APP_CONFIG.COLORS.primary,
     fontSize: 13,
     fontWeight: '600',
   },
+  // Contenedor centrado para la portada
   coverSection: {
     alignItems: 'center',
     paddingVertical: 24,
     backgroundColor: APP_CONFIG.COLORS.cardBackground,
   },
+  // Imagen de portada con sombra pronunciada
   coverImage: {
     width: 180,
     height: 260,
@@ -316,6 +361,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
   },
+  // Sección de textos informativos principales
   infoSection: {
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -324,6 +370,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: APP_CONFIG.COLORS.border,
   },
+  // Título destacado del libro
   title: {
     fontSize: 22,
     fontWeight: '700',
@@ -331,21 +378,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 4,
   },
+  // Nombre del autor
   author: {
     fontSize: 16,
     color: APP_CONFIG.COLORS.textSecondary,
     marginBottom: 12,
   },
+  // Etiqueta del estado
   statusBadge: {
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
   },
+  // Texto del badge de estado
   statusBadgeText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },
+  // Tarjeta contenedora de detalles
   detailsCard: {
     backgroundColor: APP_CONFIG.COLORS.cardBackground,
     marginHorizontal: 16,
@@ -355,54 +406,65 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: APP_CONFIG.COLORS.border,
   },
+  // Título de sección dentro de la tarjeta
   cardTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: APP_CONFIG.COLORS.textPrimary,
     marginBottom: 12,
   },
+  // Fila de clave y valor
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 6,
   },
+  // Etiqueta del campo (clave)
   detailLabel: {
     fontSize: 14,
     color: APP_CONFIG.COLORS.textSecondary,
     fontWeight: '500',
   },
+  // Valor del campo
   detailValue: {
     fontSize: 14,
     color: APP_CONFIG.COLORS.textPrimary,
     fontWeight: '600',
   },
+  // Formato tipográfico especial para el identificador único
   idText: {
     fontFamily: 'SpaceMono',
     color: APP_CONFIG.COLORS.primary,
   },
+  // Línea separadora tenue
   separator: {
     height: 1,
     backgroundColor: APP_CONFIG.COLORS.border,
     marginVertical: 4,
   },
+  // Contenedor horizontal de estrellas táctiles
   ratingContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
   },
+  // Espaciado táctil por estrella
   starTouchable: {
     padding: 4,
   },
+  // Tamaño grande de la estrella
   starLarge: {
     fontSize: 36,
   },
+  // Sugerencia interactiva para el usuario
   ratingHint: {
     textAlign: 'center',
     fontSize: 12,
     color: APP_CONFIG.COLORS.textSecondary,
     marginTop: 8,
   },
+  // Botón para alternar estado
   statusToggleButton: {
     marginHorizontal: 16,
     marginTop: 20,
@@ -415,11 +477,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  // Texto del botón de alternar estado
   statusToggleText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
+  // Botón para eliminar libro en rojo
   deleteButton: {
     marginHorizontal: 16,
     marginTop: 12,
@@ -433,11 +497,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  // Texto del botón eliminar
   deleteButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
+  // Contenedor de error si no se pudo cargar el libro
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -445,22 +511,26 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: APP_CONFIG.COLORS.background,
   },
+  // Ícono de advertencia
   errorIcon: {
     fontSize: 48,
     marginBottom: 16,
   },
+  // Texto del mensaje de error
   errorText: {
     fontSize: 16,
     color: APP_CONFIG.COLORS.textSecondary,
     textAlign: 'center',
     marginBottom: 20,
   },
+  // Botón para volver atrás tras un error
   retryButton: {
     backgroundColor: APP_CONFIG.COLORS.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 10,
   },
+  // Texto del botón de reintento/volver
   retryButtonText: {
     color: '#FFFFFF',
     fontSize: 15,
